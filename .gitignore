@@ -48,6 +48,64 @@ test-reports/
 
 # Translations
 *.mo
+
+# Professional Repository - Exclude Development/Deployment Files
+# ============================================================
+
+# Development logs and temporary files
+*.log
+logs/
+dashboard.log
+model_training.log
+
+# Coverage reports (keep source but hide detailed reports)
+htmlcov/
+.coverage
+
+# Multiple deployment scripts (keep only essential ones)
+deploy-azure-fixed.sh
+deploy-azure-webapp.sh  
+deploy-azure.sh
+deploy-container-apps.ps1
+deploy-containerapp-final.sh
+deploy-minimal.sh
+check-deployment.sh
+
+# Development batch files (keep start.sh for Linux compatibility)
+start.bat
+start_services.bat
+setup.ps1
+
+# Backup and temporary files
+*.backup.json
+*backup.json
+*.intensive_backup.json
+*.clinical_backup.json
+
+# Development environment
+.env
+.venv/
+venv/
+env/
+
+# Development configuration
+.vscode/
+config/
+
+# Experimental notebooks (keep only essential ones for demonstration)
+notebooks/*_backup.ipynb
+notebooks/archive/
+notebooks/experimental/
+
+# Documentation - keep only essential (README, LICENSE, main docs)
+DEPLOYMENT_CHECKLIST.md
+STARTUP_INSTRUCTIONS.md
+PORTFOLIO_SUMMARY.md
+
+# Development scripts (keep core training/testing)
+scripts/deployment/
+scripts/experimental/
+scripts/archive/
 *.pot
 
 # Documentation Organization
