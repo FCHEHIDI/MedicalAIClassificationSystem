@@ -160,6 +160,10 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Notebooks - Keep private for review (not for public audience)
+notebooks/
+*.ipynb
+
 # IPython
 profile_default/
 ipython_config.py

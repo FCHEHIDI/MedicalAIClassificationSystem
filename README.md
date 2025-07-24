@@ -25,19 +25,31 @@
 - **🛠️ Professional MLOps** with Docker containerization
 - **📊 Real-Time Processing** with confidence scoring and medical terminology analysis
 
-### 🎮 **Local Development** (For Code Review)
+### 🚀 **Quick Start Options**
+
+**Option 1: Production Services (Recommended)**
 ```bash
 # 1️⃣ Clone this repository
 git clone https://github.com/FCHEHIDI/MedicalAIClassificationSystem.git
 cd MedicalAIClassificationSystem
 
-# 2️⃣ Quick start (all dependencies included)
-bash start.sh
+# 2️⃣ Install dependencies
+pip install -r requirements.txt
 
-# 3️⃣ Access locally
+# 3️⃣ Start production API
+python simple_api.py
+
+# 4️⃣ In another terminal, start dashboard
+streamlit run simple_dashboard.py
+
+# 5️⃣ Access locally
 # API: http://localhost:8000/docs
 # Dashboard: http://localhost:8501
 ```
+
+**Option 2: Azure Live Demo** ⭐
+- **API**: https://medical-api.blackrock-067a426a.eastus.azurecontainerapps.io
+- **Dashboard**: https://medical-dashboard.blackrock-067a426a.eastus.azurecontainerapps.io
 
 ---
 
@@ -111,17 +123,23 @@ curl http://localhost:8000/predict \
 
 ```
 medical-classification-engine/
-├── 🚀 simple_api.py              # FastAPI production application
-├── 📊 simple_dashboard.py        # Streamlit medical dashboard  
+├── 🚀 simple_api.py              # FastAPI production application (DEPLOYED)
+├── 📊 simple_dashboard.py        # Streamlit medical dashboard (DEPLOYED)
 ├── 🤖 models/                    # Trained ML models & encoders
-├── 🗂️ src/                       # Source code modules
+├── � data/                      # Medical datasets used for training
+│   ├── pubmed_large_dataset.json
+│   └── pubmed_simple_dataset.json
 ├── 🐳 docker/                    # Docker configurations
 │   ├── api.Dockerfile           # API container
 │   └── dashboard.Dockerfile     # Dashboard container
-├── 📝 data/                      # Medical datasets
 ├── 🧪 tests/                     # Unit tests
+├── 📚 docs/                      # Essential documentation
+│   ├── DEPLOYMENT_GUIDE.md      # Complete deployment guide
+│   └── DEMO_GUIDE.md            # Demo instructions
+├── 🚀 deploy-azure-production.sh # Complete deployment script (Linux/macOS)
+├── 🚀 deploy-azure-production.ps1# Complete deployment script (Windows)
 ├── 📋 requirements.txt           # Python dependencies
-├── 🚀 deploy-azure-production.sh # Complete deployment script
+├── 🚀 start.sh                   # Local development startup
 └── 📄 README.md                  # This file
 ```
 
