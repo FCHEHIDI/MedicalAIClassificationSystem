@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  medical-api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      - MODEL_PATH=/app/models
+    volumes:
+      - ./models:/app/models:ro
+    networks:
+      - medical_net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  medical-dashboard:
+    build:
+      context: .
+      dockerfile: docker/dashboard.Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+      - MODEL_PATH=/app/models
+      - API_URL=http://medical-api:8000
+    volumes:
+      - ./models:/app/models:ro
+    networks:
+      - medical_net
+    restart: unless-stopped
+    depends_on:
+      - medical-api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  medical_net:
+    driver: bridge

@@ -1,0 +1,234 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+test-reports/
+
+# Translations
+*.mo
+*.pot
+
+# Documentation Organization
+# All docs now organized in docs/ folder structure
+# docs/archive/ - Contains historical and development documentation (keep private)
+docs/archive/
+# docs/deployment/ - Contains deployment-specific documentation
+# docs/technical/ - Contains technical documentation  
+# docs/business/ - Contains business and stakeholder documentation
+
+# Legacy documentation files (now moved to docs structure)
+# Keep these patterns for any accidentally created files in root
+*_DEEP_DIVE.md
+*_COST_ANALYSIS.md
+*_TEST_CASES.md
+*_DEPLOYMENT_STRATEGY.md
+*_SHOWCASE_*.md
+*_REVIEW.md
+PROFESSIONAL_PROJECT_*.md
+AZURE_DEVOPS_*.md
+LINKEDIN_*.md
+MULTI_PROJECT_*.md
+LEARNING_*.md
+SESSION_*.md
+
+# Azure deployment files (generated during deployment)
+.azure/
+deployment_logs/
+azure_resources.json
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+docs/archive/  # Archive contains development/internal docs - keep private
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# Project specific
+logs/
+data/raw/*
+data/processed/*
+data/features/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/features/.gitkeep
+
+# Models (keep structure but ignore trained models)
+models/*.pkl
+models/*.joblib
+models/*.h5
+models/*.pt
+models/*.pth
+models/checkpoints/
+!models/.gitkeep
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Experiment artifacts
+experiments/
+artifacts/
+
+# Database
+*.db
+*.sqlite
+
+# Docker
+.dockerignore
+
+# Monitoring
+prometheus_data/
+grafana_data/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Medical data (HIPAA compliance)
+*.csv
+*.json
+*.xml
+!sample_data.json
+!synthetic_data.csv
+
+# API keys and secrets
+secrets/
+.secrets
+credentials.json

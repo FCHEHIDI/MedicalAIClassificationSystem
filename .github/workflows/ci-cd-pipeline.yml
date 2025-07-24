@@ -1,0 +1,214 @@
+name: 🏥 Medical AI - Professional CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: medical-classification-engine
+
+jobs:
+  # 🧪 Testing & Quality Assurance
+  test-and-validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov flake8 black isort
+        
+    - name: 🔍 Code Quality Checks
+      run: |
+        # Code formatting check
+        black --check src/ tests/
+        # Import sorting check  
+        isort --check-only src/ tests/
+        # Linting
+        flake8 src/ tests/ --max-line-length=100
+        
+    - name: 🧪 Run Unit Tests
+      run: |
+        pytest tests/ -v --cov=src --cov-report=xml --cov-report=term
+        
+    - name: 🔬 Model Validation Tests
+      run: |
+        python scripts/validate_model_robustness.py
+        python scripts/confidence_analysis.py
+        
+    - name: 📊 Upload Coverage Reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        
+  # 🏗️ Build Docker Images
+  build-images:
+    needs: test-and-validate
+    runs-on: ubuntu-latest
+    outputs:
+      image-api: ${{ steps.image-api.outputs.image }}
+      image-dashboard: ${{ steps.image-dashboard.outputs.image }}
+      
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🔑 Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🏷️ Extract Metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ github.repository }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+          
+    - name: 🐳 Build and Push API Image
+      id: image-api
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: docker/api.Dockerfile
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}/api:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+        
+    - name: 🐳 Build and Push Dashboard Image  
+      id: image-dashboard
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: docker/streamlit.Dockerfile
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}/dashboard:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+  # 🚀 Deploy to Staging
+  deploy-staging:
+    needs: build-images
+    runs-on: ubuntu-latest
+    environment: staging
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🚀 Deploy to Staging
+      run: |
+        echo "🏥 Deploying Medical AI to Staging Environment"
+        echo "API Image: ${{ needs.build-images.outputs.image-api }}"
+        echo "Dashboard Image: ${{ needs.build-images.outputs.image-dashboard }}"
+        # Add your staging deployment commands here
+        # Example: kubectl apply, docker-compose up, etc.
+        
+    - name: 🧪 Staging Health Checks
+      run: |
+        echo "🔍 Running staging health checks..."
+        # Add staging health check commands
+        # curl staging-api/health
+        # pytest integration-tests/
+        
+  # 🏭 Deploy to Production
+  deploy-production:
+    needs: build-images
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🏥 Production Deployment
+      run: |
+        echo "🚀 Deploying Medical AI to Production"
+        echo "API Image: ${{ needs.build-images.outputs.image-api }}"
+        echo "Dashboard Image: ${{ needs.build-images.outputs.image-dashboard }}"
+        # Add your production deployment commands here
+        
+    - name: 📊 Production Health Monitoring
+      run: |
+        echo "📊 Setting up production monitoring..."
+        # Add production monitoring setup
+        
+  # 📋 Security Scanning
+  security-scan:
+    needs: build-images
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🔒 Run Trivy Vulnerability Scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ github.repository }}/api:${{ github.sha }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: 📤 Upload Trivy Results to GitHub Security Tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # 📈 Performance Testing
+  performance-test:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: ⚡ Load Testing with Artillery
+      run: |
+        npm install -g artillery
+        echo "🔥 Running performance tests on staging..."
+        # artillery run performance-tests/load-test.yml
+        
+    - name: 📊 ML Model Performance Benchmarks
+      run: |
+        echo "🧠 Running ML model performance benchmarks..."
+        # python scripts/benchmark_model_performance.py
+
+  # 📢 Notification
+  notify-deployment:
+    needs: [deploy-staging, deploy-production]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: 📢 Slack Notification
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#medical-ai-deployments'
+        text: |
+          🏥 Medical Classification Engine Deployment
+          Environment: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Staging' }}
+          Status: ${{ job.status }}
+          Commit: ${{ github.sha }}
+          Author: ${{ github.actor }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
