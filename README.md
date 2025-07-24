@@ -1,5 +1,23 @@
 # 🏥 Medical Text Classification System
-## Production-Ready Medical AI with 99.9% Accuracy | Azure Cloud Deployment
+## Production-Ready M---
+
+## 🏗️ **System Architecture**
+
+```
+Medical Text Input → FastAPI Backend → ML Pipeline → Classification Result
+                          ↓                ↓               ↓
+                   Azure Container      TF-IDF +        Confidence
+                        Apps          Chi2 Selection     Scoring
+                          ↓                ↓               ↓
+                   Streamlit UI      Random Forest    Real-time Display
+```
+
+### **🔧 Technical Stack**
+- **Backend**: FastAPI with Python 3.11
+- **Frontend**: Streamlit with custom medical theme
+- **ML Stack**: scikit-learn, TF-IDF vectorization, Chi2 feature selection
+- **Deployment**: Azure Container Apps, Docker containers
+- **Infrastructure**: Azure Container Registry, auto-scaling% Accuracy | Azure Cloud Deployment
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green.svg)](https://fastapi.tiangolo.com)
@@ -28,8 +46,8 @@
 ### 🎮 **Local Development** (For Code Review)
 ```bash
 # 1️⃣ Clone this repository
-git clone https://github.com/YourUsername/Medical-Classification-Engine.git
-cd Medical-Classification-Engine
+git clone https://github.com/FCHEHIDI/MedicalAIClassificationSystem.git
+cd MedicalAIClassificationSystem
 
 # 2️⃣ Quick start (all dependencies included)
 bash start.sh
@@ -43,32 +61,22 @@ bash start.sh
 
 ## 🎯 **What This Project Demonstrates**
 
-### **🔬 Advanced Machine Learning Skills**
+### **🔬 Advanced Machine Learning**
 - ✅ **99.9% Production Accuracy** across 5 medical specialties
 - ✅ **Professional Feature Engineering** with TF-IDF and Chi2 selection
 - ✅ **Real Medical Data** processing and classification
 - ✅ **Hybrid ML Pipeline** with Random Forest and regularization
-- ✅ **Model Validation** with stratified cross-validation
 
-### **☁️ Production Cloud Engineering**
+### **☁️ Production Engineering**
 - ✅ **Azure Container Apps** deployment with auto-scaling
-- ✅ **Azure Container Registry** for Docker image management
 - ✅ **FastAPI Backend** with healthcare-specific validation
 - ✅ **Streamlit Dashboard** with professional medical theme
-- ✅ **Professional Logging** and comprehensive error handling
-
-### **🛠️ DevOps & MLOps Excellence**
-- ✅ **Docker Containerization** with multi-stage builds
-- ✅ **Production Deployment** on Azure cloud infrastructure
-- ✅ **API Security** with CORS and input validation
-- ✅ **Monitoring & Health Checks** for production reliability
-- ✅ **Version Control** with proper git repository structure
+- ✅ **Docker Containerization** with comprehensive deployment scripts
 
 ### **⚕️ Healthcare Domain Expertise**
 - ✅ **Medical AI Safety** with confidence scoring
 - ✅ **Clinical Terminology** processing and validation
 - ✅ **HIPAA Compliance** considerations in architecture
-- ✅ **Professional Medical** interface design
 
 ---
 
@@ -124,7 +132,92 @@ curl -X POST "https://medical-api.blackrock-067a426a.eastus.azurecontainerapps.i
      -d '{"text": "Patient presents with chest pain and shortness of breath"}'
 
 # Model Information
+---
+
+## 🔧 **API Endpoints**
+
+### **Live Production API** (Azure Hosted)
+```bash
+# Health Check
+curl https://medical-api.blackrock-067a426a.eastus.azurecontainerapps.io/health
+
+# Classify Medical Text
+curl -X POST "https://medical-api.blackrock-067a426a.eastus.azurecontainerapps.io/predict" \
+     -H "Content-Type: application/json" \
+     -d '{"text": "Patient presents with chest pain and shortness of breath"}'
+
+# Model Information
 curl https://medical-api.blackrock-067a426a.eastus.azurecontainerapps.io/model/info
+```
+
+### **Local Development**
+```bash
+# After running: bash start.sh
+curl http://localhost:8000/predict \
+     -H "Content-Type: application/json" \
+     -d '{"text": "Your medical text here"}'
+```
+
+---
+
+## 📁 **Project Structure**
+
+```
+medical-classification-engine/
+├── 🚀 simple_api.py              # FastAPI production application
+├── 📊 simple_dashboard.py        # Streamlit medical dashboard  
+├── 🤖 models/                    # Trained ML models & encoders
+├── 🗂️ src/                       # Source code modules
+├── 🐳 docker/                    # Docker configurations
+│   ├── api.Dockerfile           # API container
+│   └── dashboard.Dockerfile     # Dashboard container
+├── 📝 data/                      # Medical datasets
+├── 🧪 tests/                     # Unit tests
+├── 📋 requirements.txt           # Python dependencies
+├── 🚀 deploy-azure-production.sh # Complete deployment script
+└── 📄 README.md                  # This file
+```
+
+## 🚀 **Deployment**
+
+### **Automated Azure Deployment**
+```bash
+# Linux/macOS
+chmod +x deploy-azure-production.sh
+./deploy-azure-production.sh
+
+# Windows
+.\deploy-azure-production.ps1
+```
+
+### **Quick Local Setup**
+```bash
+git clone https://github.com/FCHEHIDI/MedicalAIClassificationSystem.git
+cd MedicalAIClassificationSystem
+bash start.sh
+```
+
+---
+
+## 👨‍💻 **Contact**
+
+**Fares Chehidi** - Medical AI Engineer
+
+- 📧 **Email**: fareschehidi7@gmail.com
+- 💻 **GitHub**: https://github.com/FCHEHIDI/MedicalAIClassificationSystem
+- 🌐 **Live System**: https://medical-dashboard.blackrock-067a426a.eastus.azurecontainerapps.io/
+
+---
+
+## 📄 **License**
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+⭐ **Star this repository if you found it impressive!**
+
+📧 **Interested in discussing this project?** Contact: fareschehidi7@gmail.com
 ```
 
 ### **Local Development**
