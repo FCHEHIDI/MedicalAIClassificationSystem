@@ -391,7 +391,9 @@ def classification_interface(api_status):
         # Classification button
         if st.button("Perform AI Classification", type="primary", use_container_width=True):
             if user_text.strip():
-                classify_text_enhanced(user_text.strip())
+                result = classify_text_enhanced(user_text.strip())
+                if result:
+                    display_enhanced_results(result, result['response_time'], user_text.strip())
             else:
                 st.warning("Please enter clinical text for analysis")
     
@@ -428,7 +430,7 @@ def classification_interface(api_status):
         st.markdown('</div>', unsafe_allow_html=True)
 
 def classify_text_enhanced(text):
-    """Enhanced classification with metrics tracking"""
+    """Enhanced classification with metrics tracking and confidence handling"""
     start_time = time.time()
     
     with st.spinner("Analyzing medical text with AI..."):
@@ -446,42 +448,60 @@ def classify_text_enhanced(text):
             if response.status_code == 200:
                 result = response.json()
                 
-                # Update metrics
-                st.session_state.metrics["total_predictions"] += 1
-                st.session_state.metrics["specialty_counts"][result['specialty']] += 1
-                st.session_state.metrics["confidence_scores"].append(result['confidence'])
+                # Check if prediction is reliable
+                is_reliable = result['specialty'] != "Unknown/Low_Confidence"
+                display_specialty = result['specialty']
+                
+                # Update metrics (only count medical predictions)
+                if is_reliable:
+                    st.session_state.metrics["total_predictions"] += 1
+                    st.session_state.metrics["specialty_counts"][result['specialty']] += 1
+                    st.session_state.metrics["confidence_scores"].append(result['confidence'])
+                
                 st.session_state.metrics["response_times"].append(response_time)
                 st.session_state.metrics["prediction_history"].append({
-                    'specialty': result['specialty'],
+                    'specialty': display_specialty,
                     'confidence': result['confidence'],
                     'timestamp': datetime.now(),
-                    'text_length': len(text)
+                    'text_length': len(text),
+                    'is_reliable': is_reliable
                 })
                 
-                # Keep only last 100 records for performance
-                if len(st.session_state.metrics["prediction_history"]) > 100:
-                    st.session_state.metrics["prediction_history"] = st.session_state.metrics["prediction_history"][-100:]
-                
-                # Display enhanced results
-                display_enhanced_results(result, response_time, text)
-                
+                return {
+                    'specialty': display_specialty,
+                    'confidence': result['confidence'],
+                    'response_time': response_time,
+                    'is_reliable': is_reliable,
+                    'model_version': result.get('model_version', 'Unknown')
+                }
             else:
-                st.error(f"❌ API Error: {response.status_code}")
+                st.error(f"API Error: {response.status_code}")
+                return None
                 
+        except requests.exceptions.RequestException as e:
+            st.error(f"Connection error: {str(e)}")
+            return None
         except Exception as e:
-            st.error(f"❌ Error during classification: {str(e)}")
+            st.error(f"Unexpected error: {str(e)}")
+            return None
 
 def display_enhanced_results(result, response_time, original_text):
-    """Display enhanced classification results"""
+    """Display enhanced classification results with confidence handling"""
     st.markdown('<div class="medical-card">', unsafe_allow_html=True)
     st.markdown("### AI Classification Results")
+    
+    # Check if this is a reliable medical prediction
+    is_reliable = result.get('is_reliable', True)
     
     # Main metrics
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
         st.markdown('<div class="metric-container">', unsafe_allow_html=True)
-        st.metric("Medical Specialty", result['specialty'])
+        specialty_display = result['specialty']
+        if not is_reliable:
+            specialty_display = "⚠️ Non-Medical/Uncertain"
+        st.metric("Medical Specialty", specialty_display)
         st.markdown('</div>', unsafe_allow_html=True)
     
     with col2:
@@ -502,26 +522,36 @@ def display_enhanced_results(result, response_time, original_text):
     
     # Clinical interpretation
     st.markdown("### 🩺 Clinical Interpretation")
-    if result['confidence'] > 0.9:
+    
+    if not is_reliable:
+        st.error(f"❗ **Low Medical Relevance** ({confidence_pct}%) - Text may not be medical or too ambiguous for reliable classification. Please provide clear medical terminology and symptoms.")
+    elif result['confidence'] > 0.9:
         st.success(f"**High Confidence Classification** ({confidence_pct}%) - Excellent model certainty")
     elif result['confidence'] > 0.8:
         st.success(f"✅ **Good Confidence Classification** ({confidence_pct}%) - Reliable prediction")
-    elif result['confidence'] > 0.6:
+    elif result['confidence'] > 0.7:
         st.warning(f"**Moderate Confidence** ({confidence_pct}%) - Consider clinical correlation")
     else:
-        st.error(f"❗ **Low Confidence** ({confidence_pct}%) - Recommend clinical review")
+        st.warning(f"**Borderline Confidence** ({confidence_pct}%) - Recommend clinical review")
     
-    # Specialty description
-    specialty_descriptions = {
-        "Cardiology": "Heart and cardiovascular system conditions requiring cardiac evaluation",
-        "Emergency": "Urgent medical situations requiring immediate intervention and stabilization",
-        "Pulmonology": "Respiratory system and lung-related conditions requiring pulmonary assessment",
-        "Gastroenterology": "Digestive system and gastrointestinal disorders requiring GI evaluation",
-        "Dermatology": "Skin, hair, and nail-related conditions requiring dermatologic assessment"
-    }
+    # Specialty description (only for reliable predictions)
+    if is_reliable:
+        specialty_descriptions = {
+            "Cardiology": "Heart and cardiovascular system conditions requiring cardiac evaluation",
+            "Emergency": "Urgent medical situations requiring immediate intervention and stabilization",
+            "Pulmonology": "Respiratory system and lung-related conditions requiring pulmonary assessment",
+            "Gastroenterology": "Digestive system and gastrointestinal disorders requiring GI evaluation",
+            "Dermatology": "Skin, hair, and nail-related conditions requiring dermatologic assessment"
+        }
+        
+        if result['specialty'] in specialty_descriptions:
+            st.info(f"**{result['specialty']}**: {specialty_descriptions[result['specialty']]}")
+    else:
+        st.info("💡 **Recommendation**: For better results, include specific medical terminology, symptoms, diagnostic findings, or clinical observations in your text.")
     
-    if result['specialty'] in specialty_descriptions:
-        st.info(f"**{result['specialty']}**: {specialty_descriptions[result['specialty']]}")
+    # Model version info
+    if 'model_version' in result:
+        st.caption(f"Model: {result['model_version']}")
     
     st.markdown('</div>', unsafe_allow_html=True)
 
