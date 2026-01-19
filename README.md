@@ -7,6 +7,8 @@
 [![Docker](https://img.shields.io/badge/Docker-Containerized-blue.svg)](https://docker.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+![MedicalAIClassificationSystem](medicallibrary.png)
+
 > **🎯 Live Production System**: A professional medical AI platform achieving 99.9% accuracy, deployed on Azure Cloud with auto-scaling infrastructure.
 
 ---
